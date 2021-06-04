@@ -9,8 +9,9 @@ let requestCount = 0
 axios.interceptors.request.use(
   config => {
     if (!config.noLoading) {
+      requestCount++
       // 增加loading特效
-      loading = Loading({
+      loading = Loading.service({
         lock: true,
         text: 'Loading',
         spinner: 'el-icon-loading',
@@ -37,9 +38,9 @@ axios.interceptors.request.use(
 // 响应拦截器
 axios.interceptors.response.use(
   response => {
-    requestCount--
-    if (requestCount < 1) {
-      loading.close()
+    if (!response.config.noLoading && loading) {
+      requestCount--
+      requestCount < 1 && loading.close()
     }
     // 如果返回的状态码为200，说明接口请求成功，可以正常拿到数据
     // 否则的话抛出错误
@@ -117,32 +118,8 @@ const base = {
 
 const http = {
   axios,
-  get: (url, params) =>
-    new Promise((resolve, reject) =>
-      axios
-        .get(url, {
-          params: params
-        })
-        .then(res => {
-          resolve(res.data)
-        })
-        .catch(err => {
-          reject(err)
-        })
-    ),
-  post: (url, params) =>
-    new Promise((resolve, reject) =>
-      axios
-        .post(url, {
-          params: params
-        })
-        .then(res => {
-          resolve(res.data)
-        })
-        .catch(err => {
-          reject(err)
-        })
-    )
+  get: (url, params, config) => axios.get(url, Object.assign({ params }, config)),
+  post: (url, params, config) => axios.post(url, Object.assign({ params }, config))
 }
 let api = {}
 const serviceFile = require.context('./service', false, /[A-Za-z]\w+\.js$/)

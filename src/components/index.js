@@ -7,9 +7,9 @@ const requireComponent = require.context(
   false,
   /[A-Za-z]\w+\.(vue|js)$/
 )
-// markdown编辑器自动注册,video
+// 直接引用插件注册可以引入，在components里面写好，实现自动注册
 let components = {}
-requireComponent.keys().forEach(fileName => {
+requireComponent.keys().forEach((fileName) => {
   const componentConfig = requireComponent(fileName)
   const componentName = upperFirst(
     camelCase(
@@ -20,13 +20,13 @@ requireComponent.keys().forEach(fileName => {
         .replace(/\.\w+$/, '')
     )
   )
-  components[componentName] =componentConfig.default||componentConfig
+  components[componentName] = componentConfig.default || componentConfig
 })
 
-export default{
-  install(Vue){
-    Object.keys(components).forEach(componentName=>{
-      Vue.component(componentName,components[componentName])
+export default {
+  install(Vue) {
+    Object.keys(components).forEach((componentName) => {
+      Vue.component(componentName, components[componentName])
     })
   }
 }

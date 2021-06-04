@@ -6,14 +6,14 @@ Vue.use(VueRouter)
 const originalPush = VueRouter.prototype.push
 //修改原型对象中的push方法
 VueRouter.prototype.push = function push(location) {
-  return originalPush.call(this, location).catch(err => err)
+  return originalPush.call(this, location).catch((err) => err)
 }
 const routes = [
-  // {
-  //   path: "/",
-  //   name: "Home",
-  //   component: Home
-  // },
+  {
+    path: '/',
+    name: 'Home',
+    component: () => import('@/views/test/test.vue')
+  }
 ]
 
 const router = new VueRouter({
