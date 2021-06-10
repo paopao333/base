@@ -14,10 +14,9 @@ requireServices.keys().forEach(fileName => {
 export default {
   install() {
     Object.keys(mockServices).forEach(serviceName => {
-      let url = '/' + serviceName + '/'
       let mockService = mockServices[serviceName]
       Object.keys(mockService).forEach(api => {
-        url += api
+        let url = '/' + serviceName + '/' + api
         let result = mockService[api](Mock)
         Mock.mock(url, result.type || 'get', function() {
           return {

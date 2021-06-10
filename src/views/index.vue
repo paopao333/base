@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <test-c />
-  </div>
+  <div>index</div>
 </template>
 
 <script>

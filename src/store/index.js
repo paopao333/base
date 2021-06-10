@@ -6,11 +6,7 @@ import camelCase from 'lodash/camelCase'
 
 Vue.use(Vuex)
 let modules = {}
-const requireModules = require.context(
-  './moudle',
-  false,
-  /[A-Za-z]\w+\.(vue|js)$/
-)
+const requireModules = require.context('./moudle', false, /[A-Za-z]\w+\.(vue|js)$/)
 requireModules.keys().forEach(fileName => {
   const moudle = requireModules(fileName)
   const moudleName = upperFirst(
@@ -25,9 +21,9 @@ requireModules.keys().forEach(fileName => {
   modules[moudleName] = moudle.default || moudle
 })
 export default new Vuex.Store({
-  modules: {},
+  modules,
   state: {
-    token: 'lulala',
+    token: 'defaultToken',
     userInfo: {}
   },
   mutations: {

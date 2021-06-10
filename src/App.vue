@@ -1,22 +1,21 @@
 <template>
   <div id="app">
-    <i class="iconfont icon-zhuye" />
     <router-view />
   </div>
 </template>
 <script>
 export default {
-  name: "APP",
+  name: 'APP',
   components: {},
   data() {
-    return {};
+    return {}
   },
   computed: {},
   watch: {},
-  created() { },
-  mounted() { },
+  created() {},
+  mounted() {},
   methods: {}
-};
+}
 </script>
 <style lang="less">
 #app {
