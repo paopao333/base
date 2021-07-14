@@ -1,23 +1,15 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import upperFirst from 'lodash/upperFirst'
-import camelCase from 'lodash/camelCase'
-
 Vue.use(Vuex)
 let modules = {}
 const requireModules = require.context('./moudle', false, /[A-Za-z]\w+\.(vue|js)$/)
 requireModules.keys().forEach(fileName => {
   const moudle = requireModules(fileName)
-  const moudleName = upperFirst(
-    camelCase(
-      // 获取和目录深度无关的文件名
-      fileName
-        .split('/')
-        .pop()
-        .replace(/\.\w+$/, '')
-    )
-  )
+  const moudleName = fileName
+    .split('/')
+    .pop()
+    .replace(/\.\w+$/, '')
   modules[moudleName] = moudle.default || moudle
 })
 export default new Vuex.Store({
