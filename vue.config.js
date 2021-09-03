@@ -45,7 +45,7 @@ module.exports = {
   // 向 CSS 相关的 loader 传递选项
   css: {
     // 当为true时，css文件名可省略 module 默认为 false
-    requireModuleExtension: false,
+    requireModuleExtension: true,
     // 是否将组件中的 CSS 提取至一个独立的 CSS 文件中,当作为一个库构建时，你也可以将其设置为 false 免得用户自己导入 CSS
     // 默认生产环境下是 true，开发环境下是 false
     extract: false,
@@ -56,9 +56,9 @@ module.exports = {
       // sass: {
       //   prependData: `@import "@/assets/scss/_variable.scss";`,// 预设全局css变量
       // },
-      css: {
-        // 这里的选项会传递给 css-loader
-      },
+      // css: {
+      //   // 这里的选项会传递给 css-loader
+      // },
       // postcss: {
       //   // 这里的选项会传递给 postcss-loader
       // }

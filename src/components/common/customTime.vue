@@ -1,11 +1,11 @@
 <template>
   <el-row>
     <el-col :span="11">
-      <el-date-picker v-model="start" :type="type" placeholder="请选择" :value-format="format" :picker-options="startPicker" @change="changeDate()" />
+      <el-date-picker v-model="start" :type="type" :size="size" placeholder="请选择" :value-format="format" :picker-options="startPicker" @change="changeDate()" />
     </el-col>
     <el-col :span="2" style="text-align:center">{{ separator }}</el-col>
     <el-col :span="11">
-      <el-date-picker v-model="end" :type="type" placeholder="请选择" :value-format="format" :picker-options="endPicker" @change="changeDate(true)" />
+      <el-date-picker v-model="end" :type="type" :size="size" placeholder="请选择" :value-format="format" :picker-options="endPicker" @change="changeDate(true)" />
     </el-col>
 
   </el-row>
@@ -18,12 +18,12 @@
 // startDate: 开始时间
 // endDate: 结束时间
 // type: 显示类型，同elementui,
-// format: 时间格式，同elementui(这里有个bug，因为moment和elementui的数据格式不同，目前只有yyyy-MM-dd的时候可以用，其他格式待优化)
+// format: 时间格式，同elementui(这里有个bug，因为day和elementui的数据格式不同，目前只有yyyy-MM-dd的时候可以用，其他格式待优化)
 // dayRange：可选时间范围（xx天）
 // monthRange：可选月份范围（xx天）
 // offset：默认日期的偏移
 // separator：起始和结束时间分隔符
-// startDate,endDate
+// size
 // 使用示例
 // <custom-time :start-date.sync="dailyForm.date[0]" :end-date.sync="dailyForm.date[1]" offset="-1" month-range="6" />
 export default {
@@ -39,7 +39,7 @@ export default {
     },
     monthRange: {
       type: [Number, String],
-      default: '0'
+      default: '12'
     },
     offset: {
       type: [Number, String],
@@ -54,7 +54,8 @@ export default {
       default: '至'
     },
     startDate: { type: [Number, String], default: null },
-    endDate: { type: [Number, String], default: null }
+    endDate: { type: [Number, String], default: null },
+    size: { type: String, default: 'mini' }
   },
   data() {
     return {
@@ -65,8 +66,7 @@ export default {
           let disabled = false
           const offset = this.offset.split(',')[0]
           if (offset && offset > 0) {
-            disabled =
-              time.getTime() < this.toTimestamp(this.default()) - 8.64e7
+            disabled = time.getTime() < this.toTimestamp(this.default())
           } else {
             disabled = time.getTime() > this.toTimestamp(this.default())
           }
@@ -75,26 +75,38 @@ export default {
       },
       endPicker: {
         disabledDate: time => {
-          // 结束时间大于默认结束日期
-          // 超出基于起始日期的可选范围
-          // 时间小于开始日期
           const end = this.toTimestamp(
-            this.$moment(this.start)
+            this.$day(this.start)
               .add(this.dayRange, 'd')
               .add(this.monthRange, 'M')
           )
-          return (
-            time.getTime() > this.toTimestamp(this.default(true)) ||
-            time.getTime() > end ||
-            time.getTime() < this.toTimestamp(this.start)
-          )
+          let disabled = false
+          const offset = this.offset.split(',')[0]
+          if (offset && offset > 0) {
+            // 结束时间小于于默认结束日期
+            // 超出基于起始日期的可选范围
+            // 时间小于开始日期
+            disabled =
+              time.getTime() < this.toTimestamp(this.default(true)) ||
+              time.getTime() > end ||
+              time.getTime() < this.toTimestamp(this.start)
+          } else {
+            // 结束时间大于默认结束日期
+            // 超出基于起始日期的可选范围
+            // 时间小于开始日期
+            disabled =
+              time.getTime() > this.toTimestamp(this.default(true)) ||
+              time.getTime() > end ||
+              time.getTime() < this.toTimestamp(this.start)
+          }
+          return disabled
         }
       }
     }
   },
   methods: {
     default(isEnd) {
-      let time = this.$moment()
+      let time = this.$day()
       const offset = this.offset.split(',')[0]
       const offsetUnit = this.offset.split(',')[1] || 'd'
       // 先计算其实日期
@@ -102,7 +114,7 @@ export default {
       time = time.add(offset, offsetUnit)
       // 如果需要结束日期则继续计算
       if (isEnd) {
-        const end = this.$moment(time)
+        const end = this.$day(time)
           .add(this.dayRange, 'd')
           .add(this.monthRange, 'M')
 
@@ -120,17 +132,17 @@ export default {
       if (!isEnd) {
         // 开始时间改变，如果结束时间超出了range范围，则修改为range边界值
         const end = this.toTimestamp(
-          this.$moment(this.start)
+          this.$day(this.start)
             .add(this.dayRange, 'd')
             .add(this.monthRange, 'M')
         )
         if (this.toTimestamp(this.end) > end) {
-          this.end = this.$moment(end).format(this.format.toUpperCase())
+          this.end = this.$day(end).format(this.format.toUpperCase())
         }
       }
     },
     toTimestamp(time) {
-      return this.$moment(time).unix() * 1000
+      return this.$day(time).unix() * 1000
     }
   }
 }
